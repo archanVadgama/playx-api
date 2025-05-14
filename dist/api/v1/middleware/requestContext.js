@@ -8,8 +8,8 @@ import { asyncLocalStorage } from "../utility/logger.js";
  * @param {NextFunction} next
  */
 export function requestContext(req, res, next) {
-  asyncLocalStorage.run({ method: req.method, url: req.originalUrl }, () => {
-    next();
-  });
+    asyncLocalStorage.run({ method: req.method, url: req.originalUrl }, () => {
+        next();
+    });
 }
 //# sourceMappingURL=requestContext.js.map

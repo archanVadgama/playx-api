@@ -10,25 +10,22 @@ import cookieParser from "cookie-parser";
 import { requestContext } from "./api/v1/middleware/requestContext.js";
 import { errorMiddleware } from "./api/v1/middleware/errorHandler.js";
 import "./api/v1/global.js";
-import path from "path";
 const ENV = process.env;
 const app = express();
-// Middleware to serve static files from the "uploads" directory
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 // Define CORS options to control cross-origin requests
 const corsOptions = {
-  // Allow requests only from the specified origin (constructed using environment variables)
-  origin: `${ENV.FRONTEND_URL}`,
-  // Specify the HTTP methods allowed for cross-origin requests
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  // Specify the headers that can be included in cross-origin requests
-  allowedHeaders: ["Content-Type", "Authorization"],
-  // Allow credentials (e.g., cookies, authorization headers) to be sent with cross-origin requests
-  credentials: true,
-  // Do not pass preflight requests (OPTIONS) to the next middleware
-  preflightContinue: false,
-  // Return a 200 status code for successful preflight requests
-  optionsSuccessStatus: 200,
+    // Allow requests only from the specified origin (constructed using environment variables)
+    origin: `${ENV.FRONTEND_URL}`,
+    // Specify the HTTP methods allowed for cross-origin requests
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    // Specify the headers that can be included in cross-origin requests
+    allowedHeaders: ["Content-Type", "Authorization"],
+    // Allow credentials (e.g., cookies, authorization headers) to be sent with cross-origin requests
+    credentials: true,
+    // Do not pass preflight requests (OPTIONS) to the next middleware
+    preflightContinue: false,
+    // Return a 200 status code for successful preflight requests
+    optionsSuccessStatus: 200,
 };
 // Middleware
 app.use(helmet()); // Security middleware to set various HTTP headers
@@ -42,6 +39,6 @@ app.use("/api/v1", admin); // Admin routes with the /api/v1 prefix
 app.use("/api/v1", user); // User routes with the /api/v1 prefix
 app.use(errorMiddleware); // Centralized error-handling middleware
 app.listen(ENV.PORT, () => {
-  logHttp("info", `Server running on ${ENV.APP_URL}:${ENV.PORT}`);
+    logHttp("info", `Server running on ${ENV.APP_URL}:${ENV.PORT}`);
 });
 //# sourceMappingURL=index.js.map

@@ -8,7 +8,6 @@ global.apiResponse = helper.apiResponse;
 global.getHashPassword = helper.getHashPassword;
 global.verifyPassword = helper.verifyPassword;
 global.safeJson = helper.safeJson;
-global.generateUUID = helper.generateUUID;
 const ResponseCategory = response.ResponseCategory;
 global.ResponseCategory = ResponseCategory;
 //# sourceMappingURL=global.js.map
