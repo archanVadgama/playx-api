@@ -22,6 +22,47 @@ export class UserController {
    */
   static readonly getUser: RequestHandler = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.id);
+
+    if (isNaN(userId)) {
+      res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.ERROR, "invalidUserId"));
+      return;
+    }
+    try {
+      const user = await prisma.user.findUnique({
+        omit: { password: true },
+        where: { id: userId, isAdmin: false, deletedAt: null },
+      });
+
+      if (!user) {
+        res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.ERROR, "userNotFound"));
+        return;
+      }
+
+      res.status(StatusCodes.OK).json(apiResponse(ResponseCategory.SUCCESS, "dataFetched", safeJson(user)));
+    } catch (error) {
+      throw new Error(prismaErrorHandler(error as IPrismaError));
+    }
+  };
+
+  static readonly getAllUser: RequestHandler = async (req: Request, res: Response) => {
+    try {
+      const user = await prisma.user.findMany({
+        omit: { password: true },
+        where: { isAdmin: false, deletedAt: null },
+      });
+      if (!user) {
+        res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.ERROR, "userNotFound"));
+        return;
+      }
+
+      res.status(StatusCodes.OK).json(apiResponse(ResponseCategory.SUCCESS, "dataFetched", safeJson(user)));
+    } catch (error) {
+      throw new Error(prismaErrorHandler(error as IPrismaError));
+    }
+  };
+
+  static readonly deleteUser: RequestHandler = async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id);
     if (isNaN(userId)) {
       res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.ERROR, "invalidUserId"));
       return;
@@ -37,7 +78,43 @@ export class UserController {
         return;
       }
 
-      res.status(StatusCodes.OK).json(apiResponse(ResponseCategory.SUCCESS, "dataFetched", safeJson(user)));
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+
+      res.status(StatusCodes.OK).json(apiResponse(ResponseCategory.SUCCESS, "userDeleted"));
+    } catch (error) {
+      throw new Error(prismaErrorHandler(error as IPrismaError));
+    }
+  };
+
+  static readonly restoreUser: RequestHandler = async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+      res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.ERROR, "invalidUserId"));
+      return;
+    }
+    try {
+      const user = await prisma.user.findUnique({
+        omit: { password: true },
+        where: { id: userId, isAdmin: false },
+      });
+
+      if (!user) {
+        res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.ERROR, "userNotFound"));
+        return;
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          deletedAt: null,
+        },
+      });
+      res.status(StatusCodes.OK).json(apiResponse(ResponseCategory.SUCCESS, "userRestore"));
     } catch (error) {
       throw new Error(prismaErrorHandler(error as IPrismaError));
     }
