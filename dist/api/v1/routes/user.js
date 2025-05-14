@@ -10,7 +10,13 @@ router.get("/feed", UserController.getFeedData);
 router.get("/watch/:uuid", UserController.getVideo);
 // [PROTECTED Routes]
 router.get("/user/:id", checkLogin, UserController.getUser);
-router.post("/upload-video", checkLogin, uploadFields, checkSchema(uploadVideoSchema), UserController.uploadVideo);
+router.post(
+  "/upload-video",
+  checkLogin,
+  uploadFields,
+  checkSchema(uploadVideoSchema),
+  UserController.uploadVideo
+);
 // router.patch("/user/:id", checkLogin, UserController.updateUser);
 export default router;
 //# sourceMappingURL=user.js.map
