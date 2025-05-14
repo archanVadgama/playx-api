@@ -42,4 +42,73 @@ export class UserController {
       throw new Error(prismaErrorHandler(error as IPrismaError));
     }
   };
+
+  static readonly updateUser: RequestHandler = async (req: Request, res: Response) => {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
+          apiResponse(
+            ResponseCategory.ERROR,
+            "validationFailed",
+            result.formatWith((msg) => msg.msg).mapped()
+          )
+        );
+      return;
+    }
+
+    const userId = parseInt(req.params.id);
+
+    if (isNaN(userId)) {
+      res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.ERROR, "invalidUserId"));
+      return;
+    }
+
+    const {
+      username,
+      displayName,
+      channelName,
+      bio,
+      email,
+      mobileNumber,
+      password,
+      landmark,
+      addressLine1,
+      addressLine2,
+    } = req.body;
+
+    logHttp("info", req.body);
+
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: userId, isAdmin: false },
+      });
+
+      if (!user) {
+        res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.ERROR, "userNotFound"));
+        return;
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          username,
+          displayName,
+          channelName,
+          bio,
+          email,
+          mobileNumber,
+          password,
+          landmark,
+          addressLine1,
+          addressLine2,
+        },
+      });
+
+      res.status(StatusCodes.OK).json(apiResponse(ResponseCategory.SUCCESS, "userUpdated"));
+    } catch (error) {
+      throw new Error(prismaErrorHandler(error as IPrismaError));
+    }
+  };
 }

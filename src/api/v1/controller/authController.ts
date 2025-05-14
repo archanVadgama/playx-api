@@ -82,21 +82,21 @@ export class AuthController {
         });
 
         // Set refresh token as an HTTP-only cookie
-        res.cookie("refreshToken", JWT_TOKEN.refreshToken, {
-          httpOnly: true,
-          secure: NODE_ENV === "production" ? true : false,
-          sameSite: "strict",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-        });
+        // res.cookie("refreshToken", JWT_TOKEN.refreshToken, {
+        //   httpOnly: true,
+        //   secure: NODE_ENV === "production" ? true : false,
+        //   sameSite: "strict",
+        //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+        // });
       }
-      res.cookie("accessToken", JWT_TOKEN.accessToken, {
-        httpOnly: false,
-        secure: NODE_ENV === "production" ? true : false,
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-      });
+      // res.cookie("accessToken", JWT_TOKEN.accessToken, {
+      //   httpOnly: false,
+      //   secure: NODE_ENV === "production" ? true : false,
+      //   sameSite: "strict",
+      //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+      // });
 
-      res.status(StatusCodes.OK).json(apiResponse(ResponseCategory.SUCCESS, "logIn"));
+      res.status(StatusCodes.OK).json(apiResponse(ResponseCategory.SUCCESS, "logIn", JWT_TOKEN));
     } catch (error) {
       logHttp("error", error);
       throw new Error(prismaErrorHandler(error as IPrismaError));
@@ -208,14 +208,16 @@ export class AuthController {
             // Generate new JWT access token and set it in the cookie
             const JWT_TOKEN = JWTAuth.generateToken(userJWTData);
 
-            res.cookie("accessToken", JWT_TOKEN.accessToken, {
-              httpOnly: false,
-              secure: NODE_ENV === "production" ? true : false,
-              sameSite: "strict",
-              maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-            });
+            // res.cookie("accessToken", JWT_TOKEN.accessToken, {
+            //   httpOnly: false,
+            //   secure: NODE_ENV === "production" ? true : false,
+            //   sameSite: "strict",
+            //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+            // });
 
-            res.status(StatusCodes.OK).json(apiResponse(ResponseCategory.SUCCESS, "accessTokenGenerated"));
+            res
+              .status(StatusCodes.OK)
+              .json(apiResponse(ResponseCategory.SUCCESS, "accessTokenGenerated", JWT_TOKEN));
           } else {
             res
               .status(StatusCodes.BAD_REQUEST)
@@ -246,16 +248,16 @@ export class AuthController {
   static readonly logOutHandler: RequestHandler = async (req: Request, res: Response) => {
     try {
       // Clear accessToken and refreshToken cookies
-      res.clearCookie("accessToken", {
-        httpOnly: false,
-        secure: NODE_ENV === "production",
-        sameSite: "strict",
-      });
-      res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: NODE_ENV === "production",
-        sameSite: "strict",
-      });
+      // res.clearCookie("accessToken", {
+      //   httpOnly: false,
+      //   secure: NODE_ENV === "production",
+      //   sameSite: "strict",
+      // });
+      // res.clearCookie("refreshToken", {
+      //   httpOnly: true,
+      //   secure: NODE_ENV === "production",
+      //   sameSite: "strict",
+      // });
 
       // Optionally, delete refresh token from DB
       if (req.cookies?.refreshToken) {

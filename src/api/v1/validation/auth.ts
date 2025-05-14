@@ -124,4 +124,17 @@ const signUpSchema: Schema = {
   email: emailField,
 };
 
-export { logInSchema, signUpSchema, forgotPassSchema, resetPassSchema };
+const updateUser: Schema = {
+  username: stringField(5, 20, "Username"),
+  displayName: stringField(2, 40, "Display Name"),
+  channelName: stringField(2, 40, "Channel Name"),
+  bio: stringField(0, 200, "Bio"),
+  email: emailField,
+  mobileNumber: intField(10, 10, "Mobile Number"),
+  password: stringField(4, 12, "Password"),
+  landmark: stringField(2, 100, "Landmark"),
+  addressLine1: stringField(2, 100, "Address Line 1"),
+  addressLine2: stringField(2, 100, "Address Line 2"),
+};
+
+export { logInSchema, signUpSchema, forgotPassSchema, resetPassSchema, updateUser };

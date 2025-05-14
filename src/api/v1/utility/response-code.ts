@@ -17,6 +17,7 @@ export enum ResponseCategory {
 export const ResponseCodes: ResponseCodeMap = {
   [ResponseCategory.SUCCESS]: {
     dataFetched: { status: true, message: "Data Fetched Successfully" },
+    userUpdated: { status: true, message: "User Updated Successfully" },
     signUp: { status: true, message: "SignUp Successfully" },
     logIn: { status: true, message: "LogIn Successfully" },
     resetMailSent: { status: true, message: "Password Reset Mail Sent" },

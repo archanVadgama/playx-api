@@ -14,10 +14,11 @@ const prisma = new PrismaClient();
  * @return {*}
  */
 export const checkLogin = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.cookies?.accessToken) {
-    res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.TOKEN, "invalidOrExpired"));
+  if (!req.headers.authorization) {
+    res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.TOKEN, "accessTokenNotFound"));
   } else {
-    const token = JWTAuth.verifyToken(req.cookies.accessToken);
+    const accessToken = req.headers.authorization.split(" ")[1];
+    const token = JWTAuth.verifyToken(accessToken);
 
     try {
       if (token?.status && typeof token.msg === "object" && "id" in token.msg) {
