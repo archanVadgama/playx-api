@@ -14,10 +14,10 @@ import "./api/v1/global.js";
 const ENV = process.env;
 const app = express();
 
-// Define CORS options to control cross-origin requests
+// Define CORS options to allow all origins
 const corsOptions = {
-  // Allow requests only from the specified origin (constructed using environment variables)
-  origin: `${ENV.FRONTEND_URL}`,
+  // Allow requests from any origin
+  origin: "*",
 
   // Specify the HTTP methods allowed for cross-origin requests
   methods: ["GET", "POST", "PUT", "DELETE"],
