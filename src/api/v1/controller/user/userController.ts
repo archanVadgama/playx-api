@@ -57,7 +57,7 @@ export class UserController {
           username: search ? { contains: search as string, mode: "insensitive" } : undefined,
         },
         orderBy: {
-          username: sortOrder,
+          mobileNumber: sortOrder,
         },
       });
       if (!user) {
