@@ -46,18 +46,34 @@ export class UserController {
 
   static readonly getAllUser: RequestHandler = async (req: Request, res: Response) => {
     try {
-      const { search, sort } = req.query;
+      const { search, sort, createdFrom, createdTo } = req.query;
       const sortOrder = sort === "desc" ? "desc" : "asc";
+
+      type dataFilter = {
+        isAdmin: boolean;
+        deletedAt: null;
+        username?: { contains: string; mode: "insensitive" };
+        createdAt: {
+          gte?: Date;
+          lte?: Date;
+        };
+      };
+
+      const filters: dataFilter = {
+        isAdmin: false,
+        deletedAt: null,
+        username: search ? { contains: search as string, mode: "insensitive" } : undefined,
+        createdAt: {
+          gte: createdFrom ? new Date(`${createdFrom as string}T00:00:00.000Z`) : undefined,
+          lte: createdTo ? new Date(`${createdTo as string}T23:59:59.999Z`) : undefined,
+        },
+      };
 
       const user = await prisma.user.findMany({
         omit: { password: true },
-        where: {
-          isAdmin: false,
-          deletedAt: null,
-          username: search ? { contains: search as string, mode: "insensitive" } : undefined,
-        },
+        where: filters,
         orderBy: {
-          mobileNumber: sortOrder,
+          [sort ? "mobileNumber" : "createdAt"]: sortOrder,
         },
       });
       if (!user) {
