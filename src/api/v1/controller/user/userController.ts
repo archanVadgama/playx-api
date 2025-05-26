@@ -46,9 +46,19 @@ export class UserController {
 
   static readonly getAllUser: RequestHandler = async (req: Request, res: Response) => {
     try {
+      const { search, sort } = req.query;
+      const sortOrder = sort === "desc" ? "desc" : "asc";
+
       const user = await prisma.user.findMany({
         omit: { password: true },
-        where: { isAdmin: false, deletedAt: null },
+        where: {
+          isAdmin: false,
+          deletedAt: null,
+          username: search ? { contains: search as string, mode: "insensitive" } : undefined,
+        },
+        orderBy: {
+          username: sortOrder,
+        },
       });
       if (!user) {
         res.status(StatusCodes.BAD_REQUEST).json(apiResponse(ResponseCategory.ERROR, "userNotFound"));
