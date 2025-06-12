@@ -32,7 +32,7 @@ export const checkLogin = async (req: Request, res: Response, next: NextFunction
         return next();
       } else {
         res
-          .status(StatusCodes.BAD_REQUEST)
+          .status(StatusCodes.UNAUTHORIZED)
           .json(apiResponse(ResponseCategory.TOKEN, token.msg as string, null));
       }
     } catch (error) {

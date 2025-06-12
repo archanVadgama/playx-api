@@ -3,3 +3,4 @@ generated/
 .env
 dist/
 .husky/
+.vscode/
